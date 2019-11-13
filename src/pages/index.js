@@ -1,3 +1,6 @@
-import React from "react"
+import React from 'react';
+import PageWithScene from '../components/PageWithScene';
 
-export default () => <div>Hello world!</div>
+import '../styles/reset.scss';
+
+export default () => <PageWithScene />;

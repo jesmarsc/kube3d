@@ -13,7 +13,10 @@
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "dependencies": {
+    "@babylonjs/core": "^4.0.3",
     "gatsby": "^2.17.11",
+    "gatsby-plugin-sass": "^2.1.21",
+    "node-sass": "^4.13.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0"
   },
