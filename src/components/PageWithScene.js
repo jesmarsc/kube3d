@@ -29,7 +29,7 @@ class PageWithScene extends Component {
       new BABYLON.Vector3.Zero(),
       scene
     );
-    pointLight.intensity = 0.75;
+    pointLight.intensity = 1;
 
     const hemisphericLight = new BABYLON.HemisphericLight(
       'hemisphericLight',
@@ -67,7 +67,8 @@ class PageWithScene extends Component {
     }
 
     let masterMaterial = new BABYLON.StandardMaterial('masterMaterial', scene);
-    masterMaterial.emissiveColor = new BABYLON.Color3(1, 0.2, 1);
+    masterMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
+    masterMaterial.diffuseTexture = new BABYLON.Texture('2k_sun.jpg', scene);
 
     const master = BABYLON.MeshBuilder.CreateSphere(
       'master',
