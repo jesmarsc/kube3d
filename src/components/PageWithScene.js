@@ -1,46 +1,56 @@
 import React, { Component } from 'react';
-import * as BABYLON from '@babylonjs/core';
+import {
+  Vector3,
+  Color3,
+  ArcRotateCamera,
+  PointLight,
+  HemisphericLight,
+  StandardMaterial,
+  Texture,
+  MeshBuilder,
+  CubeTexture
+} from '@babylonjs/core';
 
 import Scene from './Scene';
 
 class PageWithScene extends Component {
   onSceneMount = args => {
     const { canvas, scene, engine } = args;
+    this.scene = scene;
+    this.engine = engine;
 
-    scene.clearColor = new BABYLON.Color3(0.09, 0.025, 0.09);
+    scene.clearColor = new Color3(0.09, 0.025, 0.09);
 
-    const mainCamera = new BABYLON.ArcRotateCamera(
+    const mainCamera = new ArcRotateCamera(
       'mainCamera',
-      0,
       Math.PI / 2,
-      -40,
-      BABYLON.Vector3.Zero(),
+      Math.PI / 2,
+      40,
+      Vector3.Zero(),
       scene
     );
-
-    mainCamera.angularSensibilityY *= -1;
-
     mainCamera.useAutoRotationBehavior = true;
-
     mainCamera.attachControl(canvas, true);
 
-    const pointLight = new BABYLON.PointLight(
-      'pointLight',
-      new BABYLON.Vector3.Zero(),
-      scene
-    );
+    /* Setup Lights */
+    const pointLight = new PointLight('pointLight', new Vector3.Zero(), scene);
     pointLight.intensity = 1;
 
-    const hemisphericLight = new BABYLON.HemisphericLight(
-      'hemisphericLight',
-      new BABYLON.Vector3(0, 1, 0),
-      scene
-    );
+    const topLight = new HemisphericLight('topLight', new Vector3.Up(), scene);
+    topLight.intensity = 0.5;
 
-    hemisphericLight.intensity = 0.5;
+    /* Setup Materials */
+    this.nodeMaterial = new StandardMaterial('nodeMaterial', scene);
+    this.nodeMaterial.diffuseColor = new Color3(0.5, 0.05, 0.5);
 
-    let nodeMaterial = new BABYLON.StandardMaterial('nodeMaterial', scene);
-    nodeMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.05, 0.5);
+    this.masterMaterial = new StandardMaterial('masterMaterial', scene);
+    this.masterMaterial.emissiveColor = new Color3(1, 1, 1);
+    this.masterMaterial.diffuseTexture = new Texture('2k_sun.jpg', scene);
+
+    this.pickedMaterial = new StandardMaterial('pickedMaterial', scene);
+    this.pickedMaterial.diffuseColor = new Color3.Red();
+
+    /* Create Nodes */
 
     const golden_ratio = (Math.sqrt(5) + 1) / 2;
     const golden_angle = (2 - golden_ratio) * (2 * Math.PI);
@@ -53,32 +63,22 @@ class PageWithScene extends Component {
       const x = Math.cos(longitude) * Math.cos(latitude);
       const y = Math.sin(longitude) * Math.cos(latitude);
       const z = Math.sin(latitude);
+      const position = new Vector3(x, y, z).scale(10);
 
-      const position = new BABYLON.Vector3(x, y, z).scale(10);
-
-      const sphere = BABYLON.MeshBuilder.CreateSphere(
+      const sphere = MeshBuilder.CreateSphere(
         `node${i}`,
         { diameter: 1.5 },
         scene
       );
-
       sphere.position = position;
-      sphere.material = nodeMaterial;
+      sphere.material = this.nodeMaterial;
     }
 
-    let masterMaterial = new BABYLON.StandardMaterial('masterMaterial', scene);
-    masterMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1);
-    masterMaterial.diffuseTexture = new BABYLON.Texture('2k_sun.jpg', scene);
+    const master = MeshBuilder.CreateSphere('master', { diameter: 5 }, scene);
+    master.material = this.masterMaterial;
 
-    const master = BABYLON.MeshBuilder.CreateSphere(
-      'master',
-      { diameter: 5 },
-      scene
-    );
-
-    master.material = masterMaterial;
-
-    let skybox = new BABYLON.CubeTexture('skybox/space', scene);
+    /* Setup Skybox */
+    let skybox = new CubeTexture('skybox/space', scene);
     scene.createDefaultSkybox(skybox, false, 10000);
 
     engine.runRenderLoop(() => {
@@ -86,11 +86,20 @@ class PageWithScene extends Component {
     });
   };
 
+  handleClick = () => {
+    const scene = this.scene;
+    const pickResult = scene.pick(scene.pointerX, scene.pointerY);
+
+    const { pickedMesh } = pickResult;
+
+    if (this.pickedMesh) this.pickedMesh.material = this.nodeMaterial;
+    if (pickResult.hit) pickedMesh.material = this.pickedMaterial;
+    this.pickedMesh = pickedMesh;
+  };
+
   render() {
     return (
-      <div style={{ width: '100vw', height: '100vh' }}>
-        <Scene onSceneMount={this.onSceneMount} />
-      </div>
+      <Scene onSceneMount={this.onSceneMount} handleClick={this.handleClick} />
     );
   }
 }

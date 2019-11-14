@@ -35,22 +35,12 @@ class Scene extends Component {
     if (element !== null) this.canvas = element;
   };
 
-  handleClick = () => {
-    const scene = this.scene;
-    const pickResult = scene.pick(scene.pointerX, scene.pointerY);
-
-    const pickedMaterial = new BABYLON.StandardMaterial('nodeMaterial', scene);
-    pickedMaterial.diffuseColor = new BABYLON.Color3.Red();
-
-    if (pickResult.hit) pickResult.pickedMesh.material = pickedMaterial;
-    console.log(pickResult);
-  };
-
   render() {
     return (
       <canvas
-        onClick={this.handleClick}
-        style={{ width: '100%', height: '100%' }}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onClick={this.props.handleClick}
         ref={this.setupCanvasRef}
       />
     );
