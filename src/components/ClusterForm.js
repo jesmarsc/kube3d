@@ -19,7 +19,7 @@ class ClusterForm extends Component {
   };
 
   handleDemo = () => {
-    console.log('DEMO');
+    this.props.drawDemo();
   };
 
   render() {
