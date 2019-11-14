@@ -1,0 +1,52 @@
+$matrix-green: #1ec503;
+
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 1.6rem;
+}
+
+.form {
+  &_label {
+    display: block;
+    margin: 8px 0;
+    color: $matrix-green;
+  }
+  &_input {
+    padding: 8px;
+    color: $matrix-green;
+    display: block;
+    border: 0;
+    border-bottom: 2px solid $matrix-green;
+    transition: border-bottom 0.5s;
+    background: none;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+}
+
+.button {
+  background: none;
+  color: $matrix-green;
+  padding: 4px;
+  border: 1px solid $matrix-green;
+
+  &:focus {
+    outline: 0;
+  }
+
+  &__floatRight {
+    float: right;
+  }
+}

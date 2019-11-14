@@ -50,7 +50,7 @@ class PageWithScene extends Component {
     this.pickedMaterial = new StandardMaterial('pickedMaterial', scene);
     this.pickedMaterial.diffuseColor = new Color3.Red();
 
-    /* Create Nodes */
+    /* Create Nodes 
 
     const golden_ratio = (Math.sqrt(5) + 1) / 2;
     const golden_angle = (2 - golden_ratio) * (2 * Math.PI);
