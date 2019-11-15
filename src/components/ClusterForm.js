@@ -3,8 +3,7 @@ import styles from './ClusterForm.module.scss';
 
 class ClusterForm extends Component {
   state = {
-    cluster: '',
-    password: ''
+    cluster: ''
   };
 
   handleInput = ({ target: { name, value } }) => {
@@ -13,21 +12,20 @@ class ClusterForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    const { cluster, password } = this.state;
-
-    console.log('SUBMIT');
+    this.props.handleSubmit(this.state.cluster);
   };
 
   handleDemo = () => {
-    this.props.drawDemo();
+    this.props.handleDemo(50);
   };
 
   render() {
-    const { cluster, password } = this.state;
+    const { cluster } = this.state;
     return (
       <div className={styles.container}>
         <form className={styles.form}>
           <label className={styles.form_label}>
+            Cluster Address
             <input
               className={styles.form_input}
               name="cluster"
@@ -35,19 +33,9 @@ class ClusterForm extends Component {
               onChange={this.handleInput}
               value={cluster}
             />
-            Cluster
-          </label>
-          <label className={styles.form_label}>
-            <input
-              className={styles.form_input}
-              name="password"
-              type="password"
-              onChange={this.handleInput}
-              value={password}
-            />
-            Password
           </label>
           <button
+            disabled={cluster.length === 0}
             className={styles.button}
             type="submit"
             onClick={this.handleSubmit}
@@ -62,6 +50,10 @@ class ClusterForm extends Component {
             Demo
           </button>
         </form>
+        <p className={styles.instructions}>
+          Add permission to get nodes for <br />
+          system:anonymous on your cluster
+        </p>
       </div>
     );
   }

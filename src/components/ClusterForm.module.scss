@@ -1,6 +1,8 @@
-$matrix-green: #1ec503;
+@import '../styles/variables.scss';
 
 .container {
+  user-select: none;
+
   position: fixed;
   top: 0;
   left: 0;
@@ -27,7 +29,6 @@ $matrix-green: #1ec503;
     display: block;
     border: 0;
     border-bottom: 2px solid $matrix-green;
-    transition: border-bottom 0.5s;
     background: none;
 
     &:focus {
@@ -41,12 +42,29 @@ $matrix-green: #1ec503;
   color: $matrix-green;
   padding: 4px;
   border: 1px solid $matrix-green;
+  transition: all 0.2s;
 
   &:focus {
     outline: 0;
   }
 
+  &:hover {
+    cursor: pointer;
+    color: black;
+    background-color: $matrix-green;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   &__floatRight {
     float: right;
   }
+}
+
+.instructions {
+  color: $matrix-green;
+  text-align: center;
+  margin: 16px;
 }

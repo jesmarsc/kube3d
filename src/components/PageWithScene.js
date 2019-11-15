@@ -8,16 +8,68 @@ import {
   StandardMaterial,
   Texture,
   MeshBuilder,
-  CubeTexture
+  CubeTexture,
+  AssetContainer
 } from '@babylonjs/core';
+import axios from 'axios';
+import ReactTable from 'react-table';
+
+import 'react-table/react-table.css';
+import styles from './PageWithScene.module.scss';
+import formStyles from './ClusterForm.module.scss';
 
 import ClusterForm from '../components/ClusterForm';
 
 import Scene from './Scene';
 
+const columns = [
+  {
+    Header: 'Name',
+    accessor: 'cells[0]'
+  },
+  {
+    Header: 'Status',
+    accessor: 'cells[1]'
+  },
+  {
+    Header: 'Role',
+    accessor: 'cells[2]'
+  },
+  {
+    Header: 'Age',
+    accessor: 'cells[3]'
+  },
+  {
+    Header: 'Version',
+    accessor: 'cells[4]'
+  },
+  {
+    Header: 'Internal-IP',
+    accessor: 'cells[5]'
+  },
+  {
+    Header: 'External-IP',
+    accessor: 'cells[6]'
+  },
+  {
+    Header: 'OS-Image',
+    accessor: 'cells[7]'
+  },
+  {
+    Header: 'Kernal-Version',
+    accessor: 'cells[8]'
+  },
+  {
+    Header: 'Container-Runtime',
+    accessor: 'cells[9]'
+  }
+];
+
 class PageWithScene extends Component {
   state = {
-    showForm: true
+    showForm: true,
+    nodes: [],
+    selectedNode: []
   };
 
   onSceneMount = args => {
@@ -54,7 +106,7 @@ class PageWithScene extends Component {
     this.masterMaterial.diffuseTexture = new Texture('2k_sun.jpg', scene);
 
     this.pickedMaterial = new StandardMaterial('pickedMaterial', scene);
-    this.pickedMaterial.diffuseColor = new Color3.Red();
+    this.pickedMaterial.emissiveColor = new Color3.Red();
 
     /* Setup Skybox */
     let skybox = new CubeTexture('skybox/space', scene);
@@ -65,13 +117,17 @@ class PageWithScene extends Component {
     });
   };
 
-  drawDemo = () => {
+  drawDemo = nodeCount => {
     const scene = this.scene;
+    this.container = new AssetContainer(scene);
     const golden_ratio = (Math.sqrt(5) + 1) / 2;
     const golden_angle = (2 - golden_ratio) * (2 * Math.PI);
 
-    const nodeCount = 50;
-    for (let i = 1; i <= nodeCount; ++i) {
+    const master = MeshBuilder.CreateSphere('0', { diameter: 5 }, scene);
+    master.material = this.masterMaterial;
+    this.container.meshes.push(master);
+
+    for (let i = 1; i <= nodeCount - 1; i++) {
       const latitude = Math.asin(-1 + (2 * i) / (nodeCount + 1));
       const longitude = golden_angle * i;
 
@@ -80,18 +136,27 @@ class PageWithScene extends Component {
       const z = Math.sin(latitude);
       const position = new Vector3(x, y, z).scale(10);
 
-      const sphere = MeshBuilder.CreateSphere(
-        `node${i}`,
-        { diameter: 1.5 },
-        scene
-      );
+      const sphere = MeshBuilder.CreateSphere(`${i}`, { diameter: 2 }, scene);
+      this.container.meshes.push(sphere);
       sphere.position = position;
       sphere.material = this.nodeMaterial;
     }
 
-    const master = MeshBuilder.CreateSphere('master', { diameter: 5 }, scene);
-    master.material = this.masterMaterial;
     this.setState({ showForm: false });
+  };
+
+  getDataFromCluster = async addr => {
+    const response = await axios.get(
+      `https://cors-anywhere.herokuapp.com/https://${addr}/api/v1/nodes`,
+      {
+        headers: {
+          Accept: 'application/json;as=Table;g=meta.k8s.io;v=v1beta1'
+        }
+      }
+    );
+    const nodes = response.data.rows;
+    this.setState({ nodes });
+    this.drawDemo(nodes.length);
   };
 
   handleClick = () => {
@@ -99,21 +164,68 @@ class PageWithScene extends Component {
     const pickResult = scene.pick(scene.pointerX, scene.pointerY);
 
     const { pickedMesh } = pickResult;
+    let selectedNode = [];
 
     if (this.pickedMesh) {
       this.pickedMesh.material =
-        this.pickedMesh.id === 'master'
-          ? this.masterMaterial
-          : this.nodeMaterial;
+        this.pickedMesh.id === '0' ? this.masterMaterial : this.nodeMaterial;
     }
-    if (pickResult.hit) pickedMesh.material = this.pickedMaterial;
+
+    if (pickResult.hit) {
+      pickedMesh.material = this.pickedMaterial;
+      if (this.state.nodes[pickedMesh.id])
+        selectedNode = [this.state.nodes[pickedMesh.id]];
+    }
     this.pickedMesh = pickedMesh;
+    this.setState({ selectedNode });
+  };
+
+  reset = () => {
+    if (this.container) {
+      for (const mesh of this.container.meshes) {
+        mesh.dispose();
+      }
+    }
+    this.container = null;
+    this.setState({ showForm: true });
   };
 
   render() {
-    const { showForm } = this.state;
+    const { showForm, nodes, selectedNode } = this.state;
     let form = null;
-    if (showForm) form = <ClusterForm drawDemo={this.drawDemo} />;
+    if (showForm) {
+      form = (
+        <ClusterForm
+          handleDemo={this.drawDemo}
+          handleSubmit={this.getDataFromCluster}
+        />
+      );
+    } else {
+      form = (
+        <Fragment>
+          <button
+            style={{
+              position: 'fixed',
+              left: '16px',
+              bottom: '16px',
+              fontSize: '1.6rem'
+            }}
+            className={formStyles.button}
+            onClick={this.reset}
+          >
+            {'<'} Back
+          </button>
+          <ReactTable
+            NoDataComponent={() => null}
+            minRows={1}
+            showPagination={false}
+            data={selectedNode}
+            columns={columns}
+            className={styles.table}
+          />
+        </Fragment>
+      );
+    }
 
     return (
       <Fragment>
