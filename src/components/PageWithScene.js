@@ -181,7 +181,7 @@ class PageWithScene extends Component {
     }
 
     this.setState({ nodes });
-    this.drawDemo(nodeCount);
+    this.drawDemo(nodes.length);
   };
 
   handleClick = () => {

@@ -3,7 +3,8 @@ import styles from './ClusterForm.module.scss';
 
 class ClusterForm extends Component {
   state = {
-    cluster: ''
+    cluster: '',
+    nodeCount: 50
   };
 
   handleInput = ({ target: { name, value } }) => {
@@ -15,17 +16,17 @@ class ClusterForm extends Component {
     this.props.handleSubmit(this.state.cluster);
   };
 
-  handleDemo = () => {
-    this.props.handleDemo(50);
+  handleDemo = event => {
+    event.preventDefault();
+    this.props.handleDemo(this.state.nodeCount);
   };
 
   render() {
-    const { cluster } = this.state;
+    const { cluster, nodeCount } = this.state;
     return (
       <div className={styles.container}>
         <form className={styles.form}>
           <label className={styles.form_label}>
-            Cluster Address
             <input
               className={styles.form_input}
               name="cluster"
@@ -33,22 +34,39 @@ class ClusterForm extends Component {
               onChange={this.handleInput}
               value={cluster}
             />
+            Cluster Address
+            <button
+              style={{ display: 'inline', borderTop: 'none' }}
+              disabled={cluster.length === 0}
+              className={`${styles.button} ${styles.button__floatRight}`}
+              type="submit"
+              onClick={this.handleSubmit}
+            >
+              Connect
+            </button>
           </label>
-          <button
-            disabled={cluster.length === 0}
-            className={styles.button}
-            type="submit"
-            onClick={this.handleSubmit}
-          >
-            Connect
-          </button>
-          <button
-            className={`${styles.button} ${styles.button__floatRight}`}
-            type="button"
-            onClick={this.handleDemo}
-          >
-            Demo
-          </button>
+        </form>
+
+        <form className={styles.form}>
+          <label className={styles.form_label}>
+            <input
+              className={styles.form_input}
+              name="nodeCount"
+              type="number"
+              onChange={this.handleInput}
+              min={1}
+              value={nodeCount}
+            />
+            Node Count
+            <button
+              style={{ display: 'inline', borderTop: 'none' }}
+              className={`${styles.button} ${styles.button__floatRight}`}
+              type="submit"
+              onClick={this.handleDemo}
+            >
+              Demo
+            </button>
+          </label>
         </form>
         <p className={styles.instructions}>
           Add permission to get nodes for <br />
