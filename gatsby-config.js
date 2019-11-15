@@ -6,5 +6,20 @@
 
 module.exports = {
   /* Your site config here */
-  plugins: [`gatsby-plugin-sass`]
+  plugins: [
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: `Kube3D`,
+        short_name: `Kube3D`,
+        start_url: `/`,
+        background_color: `#f7f0eb`,
+        theme_color: `#a2466c`,
+        display: `standalone`
+      }
+    },
+    `gatsby-plugin-sass`,
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-offline`
+  ]
 };
