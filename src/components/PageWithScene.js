@@ -13,6 +13,7 @@ import {
 } from '@babylonjs/core';
 import axios from 'axios';
 import ReactTable from 'react-table';
+import * as faker from 'faker/locale/en_CA';
 
 import 'react-table/react-table.css';
 import styles from './PageWithScene.module.scss';
@@ -159,6 +160,30 @@ class PageWithScene extends Component {
     this.drawDemo(nodes.length);
   };
 
+  generateRandomData = nodeCount => {
+    const nodes = [];
+
+    for (let i = 0; i < nodeCount; i++) {
+      const cells = [];
+      cells.push(
+        `node-${i}`,
+        faker.helpers.randomize(['Running', 'Restarting']),
+        'Node',
+        `${faker.date.recent().getUTCHours()} hrs`,
+        'v1.16.2',
+        faker.internet.ip(),
+        faker.internet.ip(),
+        'Buildroot 2019.02.6',
+        '4.19.76',
+        'docker://18.9.9'
+      );
+      nodes.push({ cells });
+    }
+
+    this.setState({ nodes });
+    this.drawDemo(nodeCount);
+  };
+
   handleClick = () => {
     const scene = this.scene;
     const pickResult = scene.pick(scene.pointerX, scene.pointerY);
@@ -196,7 +221,7 @@ class PageWithScene extends Component {
     if (showForm) {
       form = (
         <ClusterForm
-          handleDemo={this.drawDemo}
+          handleDemo={this.generateRandomData}
           handleSubmit={this.getDataFromCluster}
         />
       );
