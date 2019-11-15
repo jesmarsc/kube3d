@@ -147,17 +147,22 @@ class PageWithScene extends Component {
   };
 
   getDataFromCluster = async addr => {
-    const response = await axios.get(
-      `https://cors-anywhere.herokuapp.com/https://${addr}/api/v1/nodes`,
-      {
-        headers: {
-          Accept: 'application/json;as=Table;g=meta.k8s.io;v=v1beta1'
+    try {
+      const response = await axios.get(
+        `https://cors-anywhere.herokuapp.com/https://${addr}/api/v1/nodes`,
+        {
+          headers: {
+            Accept: 'application/json;as=Table;g=meta.k8s.io;v=v1beta1'
+          },
+          timeout: 5000
         }
-      }
-    );
-    const nodes = response.data.rows;
-    this.setState({ nodes });
-    this.drawDemo(nodes.length);
+      );
+      const nodes = response.data.rows;
+      this.setState({ nodes });
+      this.drawDemo(nodes.length);
+    } catch (error) {
+      window.alert('Cluster not found.');
+    }
   };
 
   generateRandomData = nodeCount => {
