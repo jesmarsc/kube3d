@@ -69,8 +69,10 @@ class ClusterForm extends Component {
           </label>
         </form>
         <p className={styles.instructions}>
-          Add permission to get nodes for <br />
-          system:anonymous on your cluster
+          Give system:anonymous permission <br />
+          to get nodes on your cluster. <br />
+          Adjust node count and select demo <br />
+          to view without a cluster.
         </p>
       </div>
     );

@@ -21,14 +21,14 @@
   &_label {
     display: block;
     margin: 8px 0;
-    color: $matrix-green;
+    color: $primary-color;
   }
   &_input {
     padding: 8px;
-    color: $matrix-green;
+    color: $primary-color;
     display: block;
     border: 0;
-    border-bottom: 2px solid $matrix-green;
+    border-bottom: 2px solid $primary-color;
     background: none;
 
     &:focus {
@@ -39,9 +39,10 @@
 
 .button {
   background: none;
-  color: $matrix-green;
+  color: $primary-color;
   padding: 4px;
-  border: 1px solid $matrix-green;
+
+  border: 1px solid $primary-color;
   transition: all 0.2s;
 
   &:focus {
@@ -51,7 +52,7 @@
   &:hover {
     cursor: pointer;
     color: black;
-    background-color: $matrix-green;
+    background-color: $primary-color;
   }
 
   &:disabled {
@@ -64,7 +65,7 @@
 }
 
 .instructions {
-  color: $matrix-green;
+  color: $primary-color;
   text-align: center;
   margin: 16px;
 }

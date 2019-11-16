@@ -38,8 +38,7 @@ class Scene extends Component {
   render() {
     return (
       <canvas
-        width={window.innerWidth}
-        height={window.innerHeight}
+        style={{ width: '100vw', height: '100vh' }}
         onClick={this.props.handleClick}
         ref={this.setupCanvasRef}
       />

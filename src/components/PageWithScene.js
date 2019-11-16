@@ -104,7 +104,7 @@ class PageWithScene extends Component {
 
     this.masterMaterial = new StandardMaterial('masterMaterial', scene);
     this.masterMaterial.emissiveColor = new Color3(1, 1, 1);
-    this.masterMaterial.diffuseTexture = new Texture('2k_sun.jpg', scene);
+    this.masterMaterial.diffuseTexture = new Texture('sun.jpg', scene);
 
     this.pickedMaterial = new StandardMaterial('pickedMaterial', scene);
     this.pickedMaterial.emissiveColor = new Color3.Red();
@@ -247,7 +247,7 @@ class PageWithScene extends Component {
           </button>
           <ReactTable
             NoDataComponent={() => null}
-            minRows={1}
+            minRows={0}
             showPagination={false}
             data={selectedNode}
             columns={columns}
